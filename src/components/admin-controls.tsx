@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 import { useState } from "react";
 
 interface AdminControlsProps {
@@ -17,7 +17,7 @@ export function AdminControls({ eventId, isActive: initialActive }: AdminControl
   async function toggleActive() {
     setLoading(true);
     const newState = !isActive;
-    await supabase
+    await getSupabase()
       .from("events")
       .update({ is_active: newState })
       .eq("id", eventId);

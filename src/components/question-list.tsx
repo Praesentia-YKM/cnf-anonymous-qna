@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 import { Question } from "@/lib/types";
 import { QuestionCard } from "./question-card";
 import { QuestionForm } from "./question-form";
@@ -33,7 +33,7 @@ export function QuestionList({
       const visitorId = getVisitorId();
       if (!visitorId) return;
 
-      const { data } = await supabase
+      const { data } = await getSupabase()
         .from("likes")
         .select("question_id")
         .eq("visitor_id", visitorId);
@@ -47,7 +47,7 @@ export function QuestionList({
 
   // Supabase Realtime 구독
   useEffect(() => {
-    const channel = supabase
+    const channel = getSupabase()
       .channel(`questions:${eventId}`)
       .on(
         "postgres_changes",
@@ -78,7 +78,7 @@ export function QuestionList({
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      getSupabase().removeChannel(channel);
     };
   }, [eventId]);
 
@@ -92,7 +92,7 @@ export function QuestionList({
   }
 
   async function handleMarkAnswered(questionId: string) {
-    await supabase
+    await getSupabase()
       .from("questions")
       .update({ is_answered: true })
       .eq("id", questionId);

@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Question } from "@/lib/types";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 import { getVisitorId } from "@/lib/utils/visitor";
 import { useState } from "react";
 
@@ -23,22 +23,22 @@ export function QuestionCard({ question, liked, onLikeToggle }: QuestionCardProp
 
     if (liked) {
       // 좋아요 취소
-      await supabase
+      await getSupabase()
         .from("likes")
         .delete()
         .eq("question_id", question.id)
         .eq("visitor_id", visitorId);
 
-      await supabase.rpc("increment_like_count", { q_id: question.id, delta: -1 });
+      await getSupabase().rpc("increment_like_count", { q_id: question.id, delta: -1 });
 
       onLikeToggle(question.id, false);
     } else {
       // 좋아요
-      await supabase
+      await getSupabase()
         .from("likes")
         .insert({ question_id: question.id, visitor_id: visitorId });
 
-      await supabase.rpc("increment_like_count", { q_id: question.id, delta: 1 });
+      await getSupabase().rpc("increment_like_count", { q_id: question.id, delta: 1 });
 
       onLikeToggle(question.id, true);
     }

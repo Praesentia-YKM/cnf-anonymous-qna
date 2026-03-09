@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 import { useState } from "react";
 
 interface QuestionFormProps {
@@ -19,7 +19,7 @@ export function QuestionForm({ eventId, isActive }: QuestionFormProps) {
     if (!content.trim() || loading) return;
 
     setLoading(true);
-    await supabase.from("questions").insert({
+    await getSupabase().from("questions").insert({
       event_id: eventId,
       content: content.trim(),
     });
