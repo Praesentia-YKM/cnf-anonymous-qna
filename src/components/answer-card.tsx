@@ -103,10 +103,10 @@ export function AnswerCard({ answer, liked, onLikeToggle }: AnswerCardProps) {
           <span className="text-[10px] text-gray-500 dark:text-gray-400">{timeAgo}</span>
           {isMine && !editing && (
             <button
-              className="text-[10px] text-gray-400 hover:text-violet-500 transition-colors cursor-pointer ml-1"
+              className="text-[10px] text-violet-400 dark:text-violet-400 font-medium hover:text-violet-600 dark:hover:text-violet-300 transition-colors cursor-pointer ml-1"
               onClick={() => setEditing(true)}
             >
-              수정
+              ✏️ 수정
             </button>
           )}
         </div>

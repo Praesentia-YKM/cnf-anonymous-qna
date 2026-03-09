@@ -173,13 +173,13 @@ export function QuestionCard({
               {question.is_answered && (
                 (isMine || isAdmin) && onToggleAnswered ? (
                   <Badge
-                    className="bg-green-100 text-green-700 text-[10px] border-0 cursor-pointer hover:bg-green-200 transition-colors"
+                    className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] border-0 cursor-pointer hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400 transition-colors"
                     onClick={() => onToggleAnswered(question.id, false)}
                   >
-                    답변 완료 ✕
+                    ✅ 답변 완료 ✕
                   </Badge>
                 ) : (
-                  <Badge className="bg-green-100 text-green-700 text-[10px] border-0">답변 완료</Badge>
+                  <Badge className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-[10px] border-0">✅ 답변 완료</Badge>
                 )
               )}
             </div>
@@ -228,31 +228,30 @@ export function QuestionCard({
               </button>
               {isMine && !editing && (
                 <button
-                  className="text-xs text-gray-400 hover:text-violet-500 transition-colors cursor-pointer"
+                  className="text-xs text-violet-400 dark:text-violet-400 font-medium hover:text-violet-600 dark:hover:text-violet-300 transition-colors cursor-pointer"
                   onClick={() => setEditing(true)}
                 >
-                  수정
+                  ✏️ 수정
                 </button>
               )}
               {(isMine || isAdmin) && !question.is_answered && onToggleAnswered && (
                 <button
-                  className="text-xs text-gray-300 hover:text-green-500 transition-colors cursor-pointer"
+                  className="text-xs text-green-500 dark:text-green-400 font-medium hover:text-green-600 dark:hover:text-green-300 transition-colors cursor-pointer"
                   onClick={() => onToggleAnswered(question.id, true)}
                 >
-                  ✓ 답변 완료 처리
+                  ✅ 답변 완료
                 </button>
               )}
               {isAdmin && onTogglePin && (
                 <button
-                  className={`text-xs transition-colors cursor-pointer flex items-center gap-0.5 ${
+                  className={`text-xs font-medium transition-colors cursor-pointer flex items-center gap-1 ${
                     question.is_pinned
-                      ? "text-amber-500 hover:text-amber-600"
-                      : "text-gray-300 hover:text-amber-500"
+                      ? "text-amber-500 hover:text-amber-600 dark:text-amber-400 dark:hover:text-amber-300"
+                      : "text-amber-400 dark:text-amber-500 hover:text-amber-600 dark:hover:text-amber-300"
                   }`}
                   onClick={() => onTogglePin(question.id, !question.is_pinned)}
                 >
-                  <Pin className="w-3 h-3" />
-                  {question.is_pinned ? "고정 해제" : "고정"}
+                  📌 {question.is_pinned ? "고정 해제" : "고정"}
                 </button>
               )}
             </div>
