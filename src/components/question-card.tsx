@@ -7,39 +7,45 @@ import { Question } from "@/lib/types";
 import { getSupabase } from "@/lib/supabase";
 import { getVisitorId } from "@/lib/utils/visitor";
 import { useState } from "react";
+import { AnswerList } from "./answer-list";
 
 interface QuestionCardProps {
   question: Question;
   liked: boolean;
   onLikeToggle: (questionId: string, liked: boolean) => void;
+  eventCode: string;
+  isAdmin?: boolean;
+  onMarkAnswered?: (questionId: string) => void;
 }
 
-export function QuestionCard({ question, liked, onLikeToggle }: QuestionCardProps) {
+export function QuestionCard({
+  question,
+  liked,
+  onLikeToggle,
+  eventCode,
+  isAdmin = false,
+  onMarkAnswered,
+}: QuestionCardProps) {
   const [loading, setLoading] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   async function handleLike() {
     setLoading(true);
     const visitorId = getVisitorId();
 
     if (liked) {
-      // 좋아요 취소
       await getSupabase()
         .from("likes")
         .delete()
         .eq("question_id", question.id)
         .eq("visitor_id", visitorId);
-
       await getSupabase().rpc("increment_like_count", { q_id: question.id, delta: -1 });
-
       onLikeToggle(question.id, false);
     } else {
-      // 좋아요
       await getSupabase()
         .from("likes")
         .insert({ question_id: question.id, visitor_id: visitorId });
-
       await getSupabase().rpc("increment_like_count", { q_id: question.id, delta: 1 });
-
       onLikeToggle(question.id, true);
     }
     setLoading(false);
@@ -61,13 +67,33 @@ export function QuestionCard({ question, liked, onLikeToggle }: QuestionCardProp
           <span className="text-sm font-bold">{question.like_count}</span>
         </Button>
         <div className="flex-1 space-y-1">
+          <p className="text-xs font-medium text-gray-600">
+            {question.nickname || "익명"}
+          </p>
           <p className="text-sm">{question.content}</p>
           <div className="flex items-center gap-2">
             <span className="text-xs text-gray-400">{timeAgo}</span>
             {question.is_answered && (
               <Badge variant="secondary" className="text-xs">답변 완료</Badge>
             )}
+            <button
+              className="text-xs text-blue-500 hover:underline"
+              onClick={() => setExpanded(!expanded)}
+            >
+              {expanded ? "답변 접기 ▴" : "답변 보기 ▾"}
+            </button>
+            {isAdmin && !question.is_answered && onMarkAnswered && (
+              <button
+                className="text-xs text-gray-400 hover:text-gray-600"
+                onClick={() => onMarkAnswered(question.id)}
+              >
+                답변 완료 처리
+              </button>
+            )}
           </div>
+          {expanded && (
+            <AnswerList questionId={question.id} eventCode={eventCode} />
+          )}
         </div>
       </CardContent>
     </Card>
