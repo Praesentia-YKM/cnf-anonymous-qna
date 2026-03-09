@@ -3,16 +3,20 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { getSupabase } from "@/lib/supabase";
+import { getNickname } from "@/lib/utils/nickname";
 import { useState } from "react";
 
 interface QuestionFormProps {
   eventId: string;
+  eventCode: string;
   isActive: boolean;
 }
 
-export function QuestionForm({ eventId, isActive }: QuestionFormProps) {
+export function QuestionForm({ eventId, eventCode, isActive }: QuestionFormProps) {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const nickname = getNickname(eventCode);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -22,6 +26,7 @@ export function QuestionForm({ eventId, isActive }: QuestionFormProps) {
     await getSupabase().from("questions").insert({
       event_id: eventId,
       content: content.trim(),
+      nickname: nickname === "익명" ? null : nickname,
     });
     setContent("");
     setLoading(false);
@@ -37,6 +42,9 @@ export function QuestionForm({ eventId, isActive }: QuestionFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-2">
+      <p className="text-xs text-gray-500">
+        {nickname || "익명"} 님으로 질문합니다
+      </p>
       <Textarea
         placeholder="익명으로 질문을 남겨보세요..."
         value={content}

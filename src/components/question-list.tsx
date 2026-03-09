@@ -12,6 +12,7 @@ type SortMode = "popular" | "recent";
 
 interface QuestionListProps {
   eventId: string;
+  eventCode: string;
   initialQuestions: Question[];
   isActive: boolean;
   isAdmin?: boolean;
@@ -19,6 +20,7 @@ interface QuestionListProps {
 
 export function QuestionList({
   eventId,
+  eventCode,
   initialQuestions,
   isActive,
   isAdmin = false,
@@ -105,7 +107,7 @@ export function QuestionList({
 
   return (
     <div className="space-y-4">
-      <QuestionForm eventId={eventId} isActive={isActive} />
+      <QuestionForm eventId={eventId} eventCode={eventCode} isActive={isActive} />
 
       <div className="flex items-center justify-between">
         <span className="text-sm text-gray-500">{questions.length}개의 질문</span>
@@ -129,25 +131,15 @@ export function QuestionList({
 
       <div className="space-y-2">
         {sorted.map((question) => (
-          <div key={question.id}>
-            <QuestionCard
-              question={question}
-              liked={likedIds.has(question.id)}
-              onLikeToggle={handleLikeToggle}
-            />
-            {isAdmin && !question.is_answered && (
-              <div className="flex justify-end mt-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-xs"
-                  onClick={() => handleMarkAnswered(question.id)}
-                >
-                  답변 완료 처리
-                </Button>
-              </div>
-            )}
-          </div>
+          <QuestionCard
+            key={question.id}
+            question={question}
+            liked={likedIds.has(question.id)}
+            onLikeToggle={handleLikeToggle}
+            eventCode={eventCode}
+            isAdmin={isAdmin}
+            onMarkAnswered={handleMarkAnswered}
+          />
         ))}
         {sorted.length === 0 && (
           <p className="text-center text-gray-400 py-8">
