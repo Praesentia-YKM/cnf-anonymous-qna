@@ -1,8 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { JoinForm } from "@/components/join-form";
-import { createEvent } from "./actions";
+import { CreateEventForm } from "@/components/create-event-form";
 
 export default function Home() {
   return (
@@ -13,9 +11,9 @@ export default function Home() {
             ?
           </div>
           <h1 className="text-4xl font-extrabold bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
-            AskAnon
+            CNF-AskAnon
           </h1>
-          <p className="text-gray-500">익명으로 질문하고, 실시간으로 소통하세요</p>
+          <p className="text-gray-500">업무관련하여 익명으로 질문하고, 실시간으로 소통하세요</p>
         </div>
 
         <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
@@ -47,18 +45,7 @@ export default function Home() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <form action={createEvent} className="space-y-3">
-              <Input
-                name="title"
-                placeholder="이벤트 제목 (예: 2026 봄 세미나 Q&A)"
-                maxLength={200}
-                required
-                className="h-11"
-              />
-              <Button type="submit" className="w-full h-11 bg-gradient-to-r from-violet-500 to-blue-500 hover:from-violet-600 hover:to-blue-600 text-white shadow-md">
-                이벤트 생성
-              </Button>
-            </form>
+            <CreateEventForm />
           </CardContent>
         </Card>
 
