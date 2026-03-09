@@ -12,7 +12,7 @@ export function CreateEventForm() {
     <form action={formAction} className="space-y-3">
       <Input
         name="title"
-        placeholder="이벤트 제목 (예: 2026 봄 세미나 Q&A)"
+        placeholder="소통방 제목 (예: 유연하고 확장 가능한 설계하는 법 Q&A)"
         maxLength={200}
         required
         className="h-11"

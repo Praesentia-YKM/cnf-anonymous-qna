@@ -9,7 +9,7 @@ export async function createEvent(
   formData: FormData
 ): Promise<{ error?: string }> {
   const title = formData.get("title") as string;
-  if (!title?.trim()) return { error: "이벤트 제목을 입력해주세요." };
+  if (!title?.trim()) return { error: "소통방 제목을 입력해주세요." };
 
   const supabase = getServerSupabase();
 
