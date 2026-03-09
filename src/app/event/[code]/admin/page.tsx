@@ -1,14 +1,7 @@
-import { createClient } from "@supabase/supabase-js";
+import { getServerSupabase } from "@/lib/supabase";
 import { notFound, redirect } from "next/navigation";
 import { QuestionList } from "@/components/question-list";
 import { AdminControls } from "@/components/admin-controls";
-
-function getServerSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-}
 
 export default async function AdminPage({
   params,
@@ -52,7 +45,6 @@ export default async function AdminPage({
           initialQuestions={questions ?? []}
           isActive={event.is_active}
           isAdmin={true}
-          adminToken={token}
         />
       </div>
     </main>

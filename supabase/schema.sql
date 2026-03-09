@@ -66,3 +66,19 @@ CREATE POLICY "likes_select" ON likes
 
 CREATE POLICY "likes_insert" ON likes
   FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "likes_delete" ON likes
+  FOR DELETE USING (true);
+
+-- events 수정 가능 (관리자 is_active 토글용)
+CREATE POLICY "events_update" ON events
+  FOR UPDATE USING (true);
+
+-- admin_token 보호: 뷰를 통해 클라이언트에 안전한 데이터만 노출
+-- (보안 강화를 위해 admin_token은 서버 사이드에서만 조회할 것)
+
+-- 좋아요 원자적 업데이트를 위한 RPC 함수
+CREATE OR REPLACE FUNCTION increment_like_count(q_id UUID, delta INTEGER)
+RETURNS void AS $$
+  UPDATE questions SET like_count = GREATEST(like_count + delta, 0) WHERE id = q_id;
+$$ LANGUAGE sql;

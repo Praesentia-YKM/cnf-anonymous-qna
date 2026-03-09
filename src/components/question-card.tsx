@@ -29,10 +29,7 @@ export function QuestionCard({ question, liked, onLikeToggle }: QuestionCardProp
         .eq("question_id", question.id)
         .eq("visitor_id", visitorId);
 
-      await supabase
-        .from("questions")
-        .update({ like_count: question.like_count - 1 })
-        .eq("id", question.id);
+      await supabase.rpc("increment_like_count", { q_id: question.id, delta: -1 });
 
       onLikeToggle(question.id, false);
     } else {
@@ -41,10 +38,7 @@ export function QuestionCard({ question, liked, onLikeToggle }: QuestionCardProp
         .from("likes")
         .insert({ question_id: question.id, visitor_id: visitorId });
 
-      await supabase
-        .from("questions")
-        .update({ like_count: question.like_count + 1 })
-        .eq("id", question.id);
+      await supabase.rpc("increment_like_count", { q_id: question.id, delta: 1 });
 
       onLikeToggle(question.id, true);
     }

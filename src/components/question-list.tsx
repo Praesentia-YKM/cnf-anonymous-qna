@@ -15,7 +15,6 @@ interface QuestionListProps {
   initialQuestions: Question[];
   isActive: boolean;
   isAdmin?: boolean;
-  adminToken?: string;
 }
 
 export function QuestionList({
@@ -23,7 +22,6 @@ export function QuestionList({
   initialQuestions,
   isActive,
   isAdmin = false,
-  adminToken,
 }: QuestionListProps) {
   const [questions, setQuestions] = useState<Question[]>(initialQuestions);
   const [sortMode, setSortMode] = useState<SortMode>("popular");
