@@ -61,14 +61,14 @@ export function QuestionForm({ eventId, eventCode, isActive, onOptimisticAdd }: 
   }
 
   return (
-    <Card className="shadow-md border-0 bg-white/90 backdrop-blur">
+    <Card className="shadow-md bg-white">
       <CardContent className="p-4">
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex items-center justify-center text-white text-xs font-bold">
               {(nickname || "익명").charAt(0)}
             </div>
-            <span className="text-sm text-gray-600 font-medium">
+            <span className="text-sm text-gray-700 font-semibold">
               {nickname || "익명"}
             </span>
           </div>
@@ -81,7 +81,7 @@ export function QuestionForm({ eventId, eventCode, isActive, onOptimisticAdd }: 
             className="resize-none"
           />
           <div className="flex justify-between items-center">
-            <span className="text-xs text-gray-400">{content.length}/500</span>
+            <span className="text-xs text-gray-500">{content.length}/500</span>
             <Button
               type="submit"
               disabled={!content.trim() || loading}

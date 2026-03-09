@@ -56,7 +56,7 @@ export function AnswerForm({ questionId, eventCode, eventId, onOptimisticAdd }: 
         <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-300 to-violet-300 flex items-center justify-center text-white text-[8px] font-bold flex-shrink-0">
           {(nickname || "익명").charAt(0)}
         </div>
-        <span className="text-xs text-gray-500">{nickname || "익명"}</span>
+        <span className="text-xs text-gray-600 font-medium">{nickname || "익명"}</span>
       </div>
       <Textarea
         placeholder="답변을 입력하세요..."
@@ -67,7 +67,7 @@ export function AnswerForm({ questionId, eventCode, eventId, onOptimisticAdd }: 
         className="text-xs resize-none"
       />
       <div className="flex justify-between items-center">
-        <span className="text-[10px] text-gray-400">{content.length}/500</span>
+        <span className="text-[10px] text-gray-500">{content.length}/500</span>
         <Button
           type="submit"
           size="sm"

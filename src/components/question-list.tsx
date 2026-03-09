@@ -127,7 +127,7 @@ export function QuestionList({
       />
 
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-500">
+        <span className="text-sm font-semibold text-gray-700">
           {questions.length}개의 질문
         </span>
         <div className="flex gap-1 bg-gray-100 rounded-lg p-0.5">

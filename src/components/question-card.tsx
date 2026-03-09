@@ -58,7 +58,7 @@ export function QuestionCard({
   const initial = (question.nickname || "익명").charAt(0);
 
   return (
-    <Card className={`shadow-sm border-0 bg-white/90 backdrop-blur transition-all hover:shadow-md ${question.is_answered ? "opacity-60" : ""}`}>
+    <Card className={`shadow-sm bg-white transition-all hover:shadow-md ${question.is_answered ? "opacity-70" : ""}`}>
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
           <button
@@ -67,7 +67,7 @@ export function QuestionCard({
             className={`flex-shrink-0 flex flex-col items-center justify-center w-12 h-14 rounded-xl transition-all ${
               liked
                 ? "bg-violet-500 text-white shadow-md"
-                : "bg-gray-50 text-gray-400 hover:bg-violet-50 hover:text-violet-500 border border-gray-100"
+                : "bg-gray-100 text-gray-500 hover:bg-violet-50 hover:text-violet-500 border border-gray-200"
             }`}
           >
             <span className="text-sm">▲</span>
@@ -79,21 +79,21 @@ export function QuestionCard({
               <div className="w-6 h-6 rounded-full bg-gradient-to-br from-violet-300 to-blue-300 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
                 {initial}
               </div>
-              <span className="text-xs font-semibold text-gray-600">
+              <span className="text-xs font-semibold text-gray-700">
                 {question.nickname || "익명"}
               </span>
-              <span className="text-xs text-gray-300">·</span>
-              <span className="text-xs text-gray-400">{timeAgo}</span>
+              <span className="text-xs text-gray-400">·</span>
+              <span className="text-xs text-gray-500">{timeAgo}</span>
               {question.is_answered && (
                 <Badge className="bg-green-100 text-green-700 text-[10px] border-0">답변 완료</Badge>
               )}
             </div>
 
-            <p className="text-sm text-gray-800 leading-relaxed">{question.content}</p>
+            <p className="text-sm text-gray-900 leading-relaxed font-medium">{question.content}</p>
 
             <div className="flex items-center gap-3 pt-1">
               <button
-                className="text-xs text-gray-400 hover:text-violet-500 transition-colors flex items-center gap-1"
+                className="text-xs text-gray-500 hover:text-violet-500 transition-colors flex items-center gap-1"
                 onClick={() => setExpanded(!expanded)}
               >
                 <span>{expanded ? "💬" : "💬"}</span>
