@@ -41,7 +41,7 @@ export async function joinEvent(formData: FormData) {
     .single();
 
   if (!data) {
-    return { error: "존재하지 않는 코드입니다." };
+    throw new Error("존재하지 않는 코드입니다.");
   }
 
   redirect(`/event/${data.code}`);
