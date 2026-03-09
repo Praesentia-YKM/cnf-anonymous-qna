@@ -61,11 +61,11 @@ export function QuestionForm({ eventId, eventCode, isActive, onOptimisticAdd }: 
   }
 
   return (
-    <Card className="shadow-md bg-white">
+    <Card className="bg-white shadow-[0_4px_16px_rgba(139,92,246,0.1)]">
       <CardContent className="p-4">
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex items-center justify-center text-white text-xs font-bold">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">
               {(nickname || "익명").charAt(0)}
             </div>
             <span className="text-sm text-gray-700 font-semibold">

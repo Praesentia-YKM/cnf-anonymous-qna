@@ -53,7 +53,7 @@ export function AnswerForm({ questionId, eventCode, eventId, onOptimisticAdd }: 
   return (
     <form onSubmit={handleSubmit} className="pt-2 space-y-2">
       <div className="flex items-center gap-2 mb-1">
-        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-300 to-violet-300 flex items-center justify-center text-white text-[8px] font-bold flex-shrink-0">
+        <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white text-[8px] font-bold flex-shrink-0">
           {(nickname || "익명").charAt(0)}
         </div>
         <span className="text-xs text-gray-600 font-medium">{nickname || "익명"}</span>

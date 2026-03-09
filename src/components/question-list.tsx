@@ -130,11 +130,11 @@ export function QuestionList({
         <span className="text-sm font-semibold text-gray-700">
           {questions.length}개의 질문
         </span>
-        <div className="flex gap-1 bg-gray-100 rounded-lg p-0.5">
+        <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
           <button
-            className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               sortMode === "popular"
-                ? "bg-white text-gray-800 shadow-sm"
+                ? "bg-white text-violet-600 shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
                 : "text-gray-500 hover:text-gray-700"
             }`}
             onClick={() => setSortMode("popular")}
@@ -142,9 +142,9 @@ export function QuestionList({
             인기순
           </button>
           <button
-            className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               sortMode === "recent"
-                ? "bg-white text-gray-800 shadow-sm"
+                ? "bg-white text-violet-600 shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
                 : "text-gray-500 hover:text-gray-700"
             }`}
             onClick={() => setSortMode("recent")}

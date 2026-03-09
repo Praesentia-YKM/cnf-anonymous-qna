@@ -58,16 +58,16 @@ export function QuestionCard({
   const initial = (question.nickname || "익명").charAt(0);
 
   return (
-    <Card className={`shadow-sm bg-white transition-all hover:shadow-md ${question.is_answered ? "opacity-70" : ""}`}>
+    <Card className={`bg-white transition-all ${question.is_answered ? "opacity-60" : ""}`}>
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
           <button
             onClick={handleLike}
             disabled={loading}
-            className={`flex-shrink-0 flex flex-col items-center justify-center w-12 h-14 rounded-xl transition-all ${
+            className={`flex-shrink-0 flex flex-col items-center justify-center w-12 h-14 rounded-xl transition-all cursor-pointer ${
               liked
-                ? "bg-violet-500 text-white shadow-md"
-                : "bg-gray-100 text-gray-600 hover:bg-violet-50 hover:text-violet-500 border border-gray-400"
+                ? "bg-violet-500 text-white shadow-md shadow-violet-200"
+                : "bg-gray-50 text-gray-600 hover:bg-violet-50 hover:text-violet-500 shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
             }`}
           >
             <span className="text-sm">▲</span>
@@ -76,7 +76,7 @@ export function QuestionCard({
 
           <div className="flex-1 min-w-0 space-y-1.5">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-violet-300 to-blue-300 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0 shadow-sm">
                 {initial}
               </div>
               <span className="text-xs font-semibold text-gray-700">
@@ -93,7 +93,7 @@ export function QuestionCard({
 
             <div className="flex items-center gap-3 pt-1">
               <button
-                className="text-xs text-gray-500 hover:text-violet-500 transition-colors flex items-center gap-1"
+                className="text-xs text-violet-500 font-medium hover:text-violet-600 transition-colors flex items-center gap-1 cursor-pointer"
                 onClick={() => setExpanded(!expanded)}
               >
                 <span>{expanded ? "💬" : "💬"}</span>
