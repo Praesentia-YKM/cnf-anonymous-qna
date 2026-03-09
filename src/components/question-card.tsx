@@ -54,14 +54,24 @@ export function QuestionCard({
 
   async function handleLike() {
     setLoading(true);
-    const delta = liked ? -1 : 1;
-
-    // 낙관적 업데이트
-    onLikeToggle(question.id, !liked);
-    onLikeCountChange(question.id, delta);
 
     try {
-      if (liked) {
+      // DB에서 실제 좋아요 상태 확인 (stale UI 방지)
+      const { data: existingLike } = await getSupabase()
+        .from("likes")
+        .select("id")
+        .eq("question_id", question.id)
+        .eq("visitor_id", visitorId)
+        .maybeSingle();
+
+      const actuallyLiked = !!existingLike;
+      const delta = actuallyLiked ? -1 : 1;
+
+      // 낙관적 업데이트
+      onLikeToggle(question.id, !actuallyLiked);
+      onLikeCountChange(question.id, delta);
+
+      if (actuallyLiked) {
         const { error: deleteError } = await getSupabase()
           .from("likes")
           .delete()
@@ -82,9 +92,14 @@ export function QuestionCard({
       if (rpcError) throw rpcError;
     } catch (err) {
       console.error("좋아요 처리 실패:", err);
-      // 롤백
-      onLikeToggle(question.id, liked);
-      onLikeCountChange(question.id, -delta);
+      // 실패 시 전체 상태 재동기화
+      const { data: likes } = await getSupabase()
+        .from("likes")
+        .select("id")
+        .eq("question_id", question.id)
+        .eq("visitor_id", visitorId)
+        .maybeSingle();
+      onLikeToggle(question.id, !!likes);
     } finally {
       setLoading(false);
     }

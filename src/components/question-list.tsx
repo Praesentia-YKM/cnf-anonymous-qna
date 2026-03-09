@@ -35,12 +35,16 @@ export function QuestionList({
       const visitorId = getVisitorId();
       if (!visitorId) return;
 
-      const { data } = await getSupabase()
+      const { data, error } = await getSupabase()
         .from("likes")
         .select("question_id")
         .eq("visitor_id", visitorId)
         .not("question_id", "is", null);
 
+      if (error) {
+        console.error("좋아요 목록 로드 실패:", error);
+        return;
+      }
       if (data) {
         setLikedIds(new Set(data.map((l) => l.question_id)));
       }
