@@ -31,9 +31,12 @@ export async function createEvent(formData: FormData) {
   redirect(`/event/${data.code}/admin?token=${data.admin_token}`);
 }
 
-export async function joinEvent(formData: FormData) {
+export async function joinEvent(
+  prevState: { error?: string } | null,
+  formData: FormData
+): Promise<{ error?: string }> {
   const code = (formData.get("code") as string)?.toUpperCase().trim();
-  if (!code) return;
+  if (!code) return { error: "코드를 입력해주세요." };
 
   const supabase = getServerSupabase();
   const { data } = await supabase
@@ -43,7 +46,7 @@ export async function joinEvent(formData: FormData) {
     .single();
 
   if (!data) {
-    throw new Error("존재하지 않는 코드입니다.");
+    return { error: "존재하지 않는 코드입니다." };
   }
 
   redirect(`/event/${data.code}`);

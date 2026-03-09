@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { createEvent, joinEvent } from "./actions";
+import { JoinForm } from "@/components/join-form";
+import { createEvent } from "./actions";
 
 export default function Home() {
   return (
@@ -17,16 +18,7 @@ export default function Home() {
             <CardTitle className="text-lg">이벤트 참여하기</CardTitle>
           </CardHeader>
           <CardContent>
-            <form action={joinEvent} className="flex gap-2">
-              <Input
-                name="code"
-                placeholder="참여 코드 입력 (예: ABC123)"
-                maxLength={6}
-                className="uppercase"
-                required
-              />
-              <Button type="submit">참여</Button>
-            </form>
+            <JoinForm />
           </CardContent>
         </Card>
 
