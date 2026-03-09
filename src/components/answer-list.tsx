@@ -10,9 +10,10 @@ import { AnswerForm } from "./answer-form";
 interface AnswerListProps {
   questionId: string;
   eventCode: string;
+  onCountChange?: (count: number) => void;
 }
 
-export function AnswerList({ questionId, eventCode }: AnswerListProps) {
+export function AnswerList({ questionId, eventCode, onCountChange }: AnswerListProps) {
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
   const [loaded, setLoaded] = useState(false);
@@ -26,7 +27,10 @@ export function AnswerList({ questionId, eventCode }: AnswerListProps) {
         .eq("question_id", questionId)
         .order("like_count", { ascending: false });
 
-      if (data) setAnswers(data);
+      if (data) {
+        setAnswers(data);
+        onCountChange?.(data.length);
+      }
 
       const visitorId = getVisitorId();
       if (visitorId) {
@@ -43,7 +47,7 @@ export function AnswerList({ questionId, eventCode }: AnswerListProps) {
       setLoaded(true);
     }
     load();
-  }, [questionId]);
+  }, [questionId, onCountChange]);
 
   // Realtime 구독
   useEffect(() => {
@@ -59,7 +63,13 @@ export function AnswerList({ questionId, eventCode }: AnswerListProps) {
         },
         (payload) => {
           if (payload.eventType === "INSERT") {
-            setAnswers((prev) => [...prev, payload.new as Answer]);
+            setAnswers((prev) => {
+              const newA = payload.new as Answer;
+              if (prev.some((a) => a.id === newA.id)) return prev;
+              const next = [...prev, newA];
+              onCountChange?.(next.length);
+              return next;
+            });
           } else if (payload.eventType === "UPDATE") {
             setAnswers((prev) =>
               prev.map((a) =>
@@ -67,9 +77,11 @@ export function AnswerList({ questionId, eventCode }: AnswerListProps) {
               )
             );
           } else if (payload.eventType === "DELETE") {
-            setAnswers((prev) =>
-              prev.filter((a) => a.id !== (payload.old as Answer).id)
-            );
+            setAnswers((prev) => {
+              const next = prev.filter((a) => a.id !== (payload.old as Answer).id);
+              onCountChange?.(next.length);
+              return next;
+            });
           }
         }
       )
@@ -78,7 +90,16 @@ export function AnswerList({ questionId, eventCode }: AnswerListProps) {
     return () => {
       getSupabase().removeChannel(channel);
     };
-  }, [questionId]);
+  }, [questionId, onCountChange]);
+
+  function handleOptimisticAdd(answer: Answer) {
+    setAnswers((prev) => {
+      if (prev.some((a) => a.id === answer.id)) return prev;
+      const next = [...prev, answer];
+      onCountChange?.(next.length);
+      return next;
+    });
+  }
 
   function handleLikeToggle(answerId: string, liked: boolean) {
     setLikedIds((prev) => {
@@ -90,13 +111,17 @@ export function AnswerList({ questionId, eventCode }: AnswerListProps) {
   }
 
   if (!loaded) {
-    return <p className="text-xs text-gray-400 py-2">로딩 중...</p>;
+    return (
+      <div className="mt-3 pl-4 border-l-2 border-violet-100">
+        <p className="text-xs text-gray-400 py-2 animate-pulse">답변 로딩 중...</p>
+      </div>
+    );
   }
 
   const sorted = [...answers].sort((a, b) => b.like_count - a.like_count);
 
   return (
-    <div className="mt-2 pl-12 border-l-2 border-gray-100">
+    <div className="mt-3 pl-4 border-l-2 border-violet-100 space-y-1">
       {sorted.map((answer) => (
         <AnswerCard
           key={answer.id}
@@ -106,9 +131,13 @@ export function AnswerList({ questionId, eventCode }: AnswerListProps) {
         />
       ))}
       {sorted.length === 0 && (
-        <p className="text-xs text-gray-400 py-2">아직 답변이 없습니다</p>
+        <p className="text-xs text-gray-400 py-2">아직 답변이 없습니다. 첫 답변을 남겨보세요!</p>
       )}
-      <AnswerForm questionId={questionId} eventCode={eventCode} />
+      <AnswerForm
+        questionId={questionId}
+        eventCode={eventCode}
+        onOptimisticAdd={handleOptimisticAdd}
+      />
     </div>
   );
 }

@@ -38,7 +38,8 @@ export function QuestionList({
       const { data } = await getSupabase()
         .from("likes")
         .select("question_id")
-        .eq("visitor_id", visitorId);
+        .eq("visitor_id", visitorId)
+        .not("question_id", "is", null);
 
       if (data) {
         setLikedIds(new Set(data.map((l) => l.question_id)));
@@ -61,7 +62,11 @@ export function QuestionList({
         },
         (payload) => {
           if (payload.eventType === "INSERT") {
-            setQuestions((prev) => [payload.new as Question, ...prev]);
+            setQuestions((prev) => {
+              const newQ = payload.new as Question;
+              if (prev.some((q) => q.id === newQ.id)) return prev;
+              return [newQ, ...prev];
+            });
           } else if (payload.eventType === "UPDATE") {
             setQuestions((prev) =>
               prev.map((q) =>
@@ -83,6 +88,13 @@ export function QuestionList({
       getSupabase().removeChannel(channel);
     };
   }, [eventId]);
+
+  function handleOptimisticAdd(question: Question) {
+    setQuestions((prev) => {
+      if (prev.some((q) => q.id === question.id)) return prev;
+      return [question, ...prev];
+    });
+  }
 
   function handleLikeToggle(questionId: string, liked: boolean) {
     setLikedIds((prev) => {
@@ -107,29 +119,42 @@ export function QuestionList({
 
   return (
     <div className="space-y-4">
-      <QuestionForm eventId={eventId} eventCode={eventCode} isActive={isActive} />
+      <QuestionForm
+        eventId={eventId}
+        eventCode={eventCode}
+        isActive={isActive}
+        onOptimisticAdd={handleOptimisticAdd}
+      />
 
       <div className="flex items-center justify-between">
-        <span className="text-sm text-gray-500">{questions.length}개의 질문</span>
-        <div className="flex gap-1">
-          <Button
-            variant={sortMode === "popular" ? "default" : "ghost"}
-            size="sm"
+        <span className="text-sm font-medium text-gray-500">
+          {questions.length}개의 질문
+        </span>
+        <div className="flex gap-1 bg-gray-100 rounded-lg p-0.5">
+          <button
+            className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+              sortMode === "popular"
+                ? "bg-white text-gray-800 shadow-sm"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
             onClick={() => setSortMode("popular")}
           >
             인기순
-          </Button>
-          <Button
-            variant={sortMode === "recent" ? "default" : "ghost"}
-            size="sm"
+          </button>
+          <button
+            className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+              sortMode === "recent"
+                ? "bg-white text-gray-800 shadow-sm"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
             onClick={() => setSortMode("recent")}
           >
             최신순
-          </Button>
+          </button>
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         {sorted.map((question) => (
           <QuestionCard
             key={question.id}
@@ -142,9 +167,11 @@ export function QuestionList({
           />
         ))}
         {sorted.length === 0 && (
-          <p className="text-center text-gray-400 py-8">
-            아직 질문이 없습니다. 첫 번째 질문을 남겨보세요!
-          </p>
+          <div className="text-center py-12">
+            <div className="text-4xl mb-3">💬</div>
+            <p className="text-gray-400 font-medium">아직 질문이 없습니다</p>
+            <p className="text-gray-300 text-sm mt-1">첫 번째 질문을 남겨보세요!</p>
+          </div>
         )}
       </div>
     </div>

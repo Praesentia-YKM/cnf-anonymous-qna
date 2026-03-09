@@ -28,6 +28,7 @@ export function QuestionCard({
 }: QuestionCardProps) {
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [answerCount, setAnswerCount] = useState<number | null>(null);
 
   async function handleLike() {
     setLoading(true);
@@ -52,48 +53,73 @@ export function QuestionCard({
   }
 
   const timeAgo = getTimeAgo(question.created_at);
+  const initial = (question.nickname || "익명").charAt(0);
 
   return (
-    <Card className={question.is_answered ? "opacity-60" : ""}>
-      <CardContent className="flex items-start gap-3 p-4">
-        <Button
-          variant={liked ? "default" : "outline"}
-          size="sm"
-          className="flex-shrink-0 flex flex-col items-center min-w-[48px] h-auto py-1"
-          onClick={handleLike}
-          disabled={loading}
-        >
-          <span className="text-lg">▲</span>
-          <span className="text-sm font-bold">{question.like_count}</span>
-        </Button>
-        <div className="flex-1 space-y-1">
-          <p className="text-xs font-medium text-gray-600">
-            {question.nickname || "익명"}
-          </p>
-          <p className="text-sm">{question.content}</p>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400">{timeAgo}</span>
-            {question.is_answered && (
-              <Badge variant="secondary" className="text-xs">답변 완료</Badge>
-            )}
-            <button
-              className="text-xs text-blue-500 hover:underline"
-              onClick={() => setExpanded(!expanded)}
-            >
-              {expanded ? "답변 접기 ▴" : "답변 보기 ▾"}
-            </button>
-            {isAdmin && !question.is_answered && onMarkAnswered && (
+    <Card className={`shadow-sm border-0 bg-white/90 backdrop-blur transition-all hover:shadow-md ${question.is_answered ? "opacity-60" : ""}`}>
+      <CardContent className="p-4">
+        <div className="flex items-start gap-3">
+          <button
+            onClick={handleLike}
+            disabled={loading}
+            className={`flex-shrink-0 flex flex-col items-center justify-center w-12 h-14 rounded-xl transition-all ${
+              liked
+                ? "bg-violet-500 text-white shadow-md"
+                : "bg-gray-50 text-gray-400 hover:bg-violet-50 hover:text-violet-500 border border-gray-100"
+            }`}
+          >
+            <span className="text-sm">▲</span>
+            <span className="text-sm font-bold">{question.like_count}</span>
+          </button>
+
+          <div className="flex-1 min-w-0 space-y-1.5">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-violet-300 to-blue-300 flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0">
+                {initial}
+              </div>
+              <span className="text-xs font-semibold text-gray-600">
+                {question.nickname || "익명"}
+              </span>
+              <span className="text-xs text-gray-300">·</span>
+              <span className="text-xs text-gray-400">{timeAgo}</span>
+              {question.is_answered && (
+                <Badge className="bg-green-100 text-green-700 text-[10px] border-0">답변 완료</Badge>
+              )}
+            </div>
+
+            <p className="text-sm text-gray-800 leading-relaxed">{question.content}</p>
+
+            <div className="flex items-center gap-3 pt-1">
               <button
-                className="text-xs text-gray-400 hover:text-gray-600"
-                onClick={() => onMarkAnswered(question.id)}
+                className="text-xs text-gray-400 hover:text-violet-500 transition-colors flex items-center gap-1"
+                onClick={() => setExpanded(!expanded)}
               >
-                답변 완료 처리
+                <span>{expanded ? "💬" : "💬"}</span>
+                <span>{expanded ? "답변 접기" : "답변 보기"}</span>
+                {answerCount !== null && answerCount > 0 && (
+                  <span className="bg-violet-100 text-violet-600 rounded-full px-1.5 py-0.5 text-[10px] font-bold">
+                    {answerCount}
+                  </span>
+                )}
               </button>
+              {isAdmin && !question.is_answered && onMarkAnswered && (
+                <button
+                  className="text-xs text-gray-300 hover:text-green-500 transition-colors"
+                  onClick={() => onMarkAnswered(question.id)}
+                >
+                  ✓ 답변 완료 처리
+                </button>
+              )}
+            </div>
+
+            {expanded && (
+              <AnswerList
+                questionId={question.id}
+                eventCode={eventCode}
+                onCountChange={setAnswerCount}
+              />
             )}
           </div>
-          {expanded && (
-            <AnswerList questionId={question.id} eventCode={eventCode} />
-          )}
         </div>
       </CardContent>
     </Card>

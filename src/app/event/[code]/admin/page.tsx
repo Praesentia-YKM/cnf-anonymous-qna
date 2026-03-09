@@ -34,12 +34,17 @@ export default async function AdminPage({
     .order("like_count", { ascending: false });
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       <NicknameGate eventCode={event.code}>
-        <div className="max-w-2xl mx-auto p-4 space-y-4">
-          <div className="text-center space-y-1">
-            <h1 className="text-2xl font-bold">{event.title}</h1>
-            <p className="text-sm text-gray-500">관리자 모드 | 코드: {event.code}</p>
+        <div className="max-w-2xl mx-auto px-4 py-6 space-y-5">
+          <div className="text-center space-y-2">
+            <h1 className="text-2xl font-bold text-gray-800">{event.title}</h1>
+            <div className="inline-flex items-center gap-2 bg-white rounded-full px-4 py-1.5 shadow-sm border border-gray-100">
+              <span className="text-xs font-medium text-orange-500">관리자</span>
+              <span className="text-xs text-gray-300">|</span>
+              <span className="text-xs text-gray-400">참여 코드</span>
+              <span className="font-mono font-bold text-violet-600 tracking-wider">{event.code}</span>
+            </div>
           </div>
           <AdminControls eventId={event.id} isActive={event.is_active} />
           <QuestionList

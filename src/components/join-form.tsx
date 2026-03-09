@@ -15,15 +15,19 @@ export function JoinForm() {
           name="code"
           placeholder="참여 코드 입력 (예: ABC123)"
           maxLength={6}
-          className="uppercase"
+          className="uppercase h-11 text-center tracking-widest font-mono text-lg"
           required
         />
-        <Button type="submit" disabled={pending}>
+        <Button
+          type="submit"
+          disabled={pending}
+          className="h-11 px-6 bg-gradient-to-r from-violet-500 to-blue-500 hover:from-violet-600 hover:to-blue-600 text-white"
+        >
           {pending ? "..." : "참여"}
         </Button>
       </div>
       {state?.error && (
-        <p className="text-sm text-red-500">{state.error}</p>
+        <p className="text-sm text-red-500 text-center">{state.error}</p>
       )}
     </form>
   );

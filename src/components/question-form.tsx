@@ -2,17 +2,20 @@
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
 import { getSupabase } from "@/lib/supabase";
 import { getNickname } from "@/lib/utils/nickname";
+import { Question } from "@/lib/types";
 import { useState } from "react";
 
 interface QuestionFormProps {
   eventId: string;
   eventCode: string;
   isActive: boolean;
+  onOptimisticAdd?: (question: Question) => void;
 }
 
-export function QuestionForm({ eventId, eventCode, isActive }: QuestionFormProps) {
+export function QuestionForm({ eventId, eventCode, isActive, onOptimisticAdd }: QuestionFormProps) {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -22,42 +25,71 @@ export function QuestionForm({ eventId, eventCode, isActive }: QuestionFormProps
     e.preventDefault();
     if (!content.trim() || loading) return;
 
+    const trimmed = content.trim();
+    const nick = nickname === "익명" ? null : nickname;
+
     setLoading(true);
-    await getSupabase().from("questions").insert({
-      event_id: eventId,
-      content: content.trim(),
-      nickname: nickname === "익명" ? null : nickname,
-    });
     setContent("");
+
+    const { data } = await getSupabase()
+      .from("questions")
+      .insert({
+        event_id: eventId,
+        content: trimmed,
+        nickname: nick,
+      })
+      .select()
+      .single();
+
+    if (data && onOptimisticAdd) {
+      onOptimisticAdd(data);
+    }
+
     setLoading(false);
   }
 
   if (!isActive) {
     return (
-      <div className="text-center text-gray-500 py-4">
-        질문 접수가 종료되었습니다.
-      </div>
+      <Card className="border-dashed border-gray-200 bg-gray-50/50">
+        <CardContent className="text-center text-gray-400 py-6">
+          질문 접수가 종료되었습니다
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-2">
-      <p className="text-xs text-gray-500">
-        {nickname || "익명"} 님으로 질문합니다
-      </p>
-      <Textarea
-        placeholder="익명으로 질문을 남겨보세요..."
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        maxLength={500}
-        rows={3}
-      />
-      <div className="flex justify-between items-center">
-        <span className="text-xs text-gray-400">{content.length}/500</span>
-        <Button type="submit" disabled={!content.trim() || loading}>
-          {loading ? "전송 중..." : "질문하기"}
-        </Button>
-      </div>
-    </form>
+    <Card className="shadow-md border-0 bg-white/90 backdrop-blur">
+      <CardContent className="p-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-400 to-blue-400 flex items-center justify-center text-white text-xs font-bold">
+              {(nickname || "익명").charAt(0)}
+            </div>
+            <span className="text-sm text-gray-600 font-medium">
+              {nickname || "익명"}
+            </span>
+          </div>
+          <Textarea
+            placeholder="궁금한 것을 자유롭게 질문해보세요..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            maxLength={500}
+            rows={3}
+            className="resize-none border-gray-200 focus:border-violet-300"
+          />
+          <div className="flex justify-between items-center">
+            <span className="text-xs text-gray-400">{content.length}/500</span>
+            <Button
+              type="submit"
+              disabled={!content.trim() || loading}
+              className="bg-gradient-to-r from-violet-500 to-blue-500 hover:from-violet-600 hover:to-blue-600 text-white shadow-sm"
+            >
+              {loading ? "전송 중..." : "질문하기"}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
