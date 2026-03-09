@@ -193,17 +193,27 @@ export function SuperAdminDashboard({
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b bg-gray-50/50">
-                    <th className="text-left p-3 font-medium text-gray-600">IP</th>
+                    <th className="text-left p-3 font-medium text-gray-600">사용자</th>
                     <th className="text-left p-3 font-medium text-gray-600">액션</th>
-                    <th className="text-left p-3 font-medium text-gray-600">닉네임</th>
                     <th className="text-left p-3 font-medium text-gray-600">내용</th>
                     <th className="text-left p-3 font-medium text-gray-600">시간</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {logs.map((log) => (
+                  {logs.map((log) => {
+                    const shortId = log.visitor_id ? log.visitor_id.slice(0, 8) : null;
+                    return (
                     <tr key={log.id} className="border-b hover:bg-gray-50/50">
-                      <td className="p-3 font-mono text-xs text-gray-500">{log.ip_address || "-"}</td>
+                      <td className="p-3">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs font-medium">{log.nickname || "익명"}</span>
+                          {shortId && (
+                            <span className="font-mono text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded" title={log.visitor_id || ""}>
+                              #{shortId}
+                            </span>
+                          )}
+                        </div>
+                      </td>
                       <td className="p-3">
                         <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
                           log.action_type === "question"
@@ -215,7 +225,6 @@ export function SuperAdminDashboard({
                           {actionLabel[log.action_type] || log.action_type}
                         </span>
                       </td>
-                      <td className="p-3 text-xs">{log.nickname || "익명"}</td>
                       <td className="p-3 text-xs text-gray-600 max-w-[200px] truncate">
                         {log.content_preview || "-"}
                       </td>
@@ -223,10 +232,11 @@ export function SuperAdminDashboard({
                         {new Date(log.created_at).toLocaleString("ko-KR")}
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                   {logs.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="p-6 text-center text-gray-400">
+                      <td colSpan={4} className="p-6 text-center text-gray-400">
                         아직 활동 로그가 없습니다
                       </td>
                     </tr>
