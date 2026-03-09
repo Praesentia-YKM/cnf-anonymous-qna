@@ -13,7 +13,7 @@ export default function Home() {
           <h1 className="text-4xl font-extrabold bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent">
             CNF-AskAnon
           </h1>
-          <p className="text-gray-500">업무관련하여 익명으로 질문하고, 실시간으로 소통하세요</p>
+          <p className="text-gray-500">업무 관련하여 익명으로 질문하고 업무 지식을 공유해봐요</p>
         </div>
 
         <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
