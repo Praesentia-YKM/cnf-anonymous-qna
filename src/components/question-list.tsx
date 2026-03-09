@@ -119,14 +119,30 @@ export function QuestionList({
     );
   }
 
-  async function handleMarkAnswered(questionId: string) {
+  async function handleToggleAnswered(questionId: string, answered: boolean) {
+    setQuestions((prev) =>
+      prev.map((q) => q.id === questionId ? { ...q, is_answered: answered } : q)
+    );
     await getSupabase()
       .from("questions")
-      .update({ is_answered: true })
+      .update({ is_answered: answered })
+      .eq("id", questionId);
+  }
+
+  async function handleTogglePin(questionId: string, pinned: boolean) {
+    setQuestions((prev) =>
+      prev.map((q) => q.id === questionId ? { ...q, is_pinned: pinned } : q)
+    );
+    await getSupabase()
+      .from("questions")
+      .update({ is_pinned: pinned })
       .eq("id", questionId);
   }
 
   const sorted = [...questions].sort((a, b) => {
+    // 고정된 질문을 항상 상단에
+    if (a.is_pinned && !b.is_pinned) return -1;
+    if (!a.is_pinned && b.is_pinned) return 1;
     if (sortMode === "popular") return b.like_count - a.like_count;
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
@@ -141,15 +157,15 @@ export function QuestionList({
       />
 
       <div className="flex items-center justify-between">
-        <span className="text-sm font-semibold text-gray-700">
+        <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
           {questions.length}개의 질문
         </span>
-        <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+        <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
           <button
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               sortMode === "popular"
-                ? "bg-white text-violet-600 shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
-                : "text-gray-500 hover:text-gray-700"
+                ? "bg-white dark:bg-gray-700 text-violet-600 dark:text-violet-400 shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
+                : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
             }`}
             onClick={() => setSortMode("popular")}
           >
@@ -158,8 +174,8 @@ export function QuestionList({
           <button
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               sortMode === "recent"
-                ? "bg-white text-violet-600 shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
-                : "text-gray-500 hover:text-gray-700"
+                ? "bg-white dark:bg-gray-700 text-violet-600 dark:text-violet-400 shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
+                : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
             }`}
             onClick={() => setSortMode("recent")}
           >
@@ -179,14 +195,15 @@ export function QuestionList({
             eventCode={eventCode}
             eventId={eventId}
             isAdmin={isAdmin}
-            onMarkAnswered={handleMarkAnswered}
+            onToggleAnswered={handleToggleAnswered}
+            onTogglePin={handleTogglePin}
           />
         ))}
         {sorted.length === 0 && (
           <div className="text-center py-12">
             <div className="text-4xl mb-3">💬</div>
-            <p className="text-gray-400 font-medium">아직 질문이 없습니다</p>
-            <p className="text-gray-300 text-sm mt-1">첫 번째 질문을 남겨보세요!</p>
+            <p className="text-gray-400 dark:text-gray-500 font-medium">아직 질문이 없습니다</p>
+            <p className="text-gray-300 dark:text-gray-600 text-sm mt-1">첫 번째 질문을 남겨보세요!</p>
           </div>
         )}
       </div>

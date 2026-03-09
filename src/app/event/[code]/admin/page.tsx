@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { QuestionList } from "@/components/question-list";
 import { AdminControls } from "@/components/admin-controls";
 import { NicknameGate } from "@/components/nickname-gate";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function AdminPage({
   params,
@@ -34,16 +35,19 @@ export default async function AdminPage({
     .order("like_count", { ascending: false });
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <main className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       <NicknameGate eventCode={event.code}>
         <div className="max-w-2xl mx-auto px-4 py-6 space-y-5">
-          <div className="text-center space-y-2">
-            <h1 className="text-2xl font-bold text-gray-800">{event.title}</h1>
-            <div className="inline-flex items-center gap-2 bg-white rounded-full px-4 py-1.5 shadow-sm border border-gray-100">
+          <div className="text-center space-y-2 relative">
+            <div className="absolute right-0 top-0">
+              <ThemeToggle />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{event.title}</h1>
+            <div className="inline-flex items-center gap-2 bg-white dark:bg-gray-800 rounded-full px-4 py-1.5 shadow-sm border border-gray-100 dark:border-gray-700">
               <span className="text-xs font-medium text-orange-500">관리자</span>
-              <span className="text-xs text-gray-300">|</span>
+              <span className="text-xs text-gray-300 dark:text-gray-600">|</span>
               <span className="text-xs text-gray-400">참여 코드</span>
-              <span className="font-mono font-bold text-violet-600 tracking-wider">{event.code}</span>
+              <span className="font-mono font-bold text-violet-600 dark:text-violet-400 tracking-wider">{event.code}</span>
             </div>
           </div>
           <AdminControls eventId={event.id} isActive={event.is_active} />

@@ -15,6 +15,7 @@ export interface Question {
   visitor_id: string | null;
   like_count: number;
   is_answered: boolean;
+  is_pinned: boolean;
   created_at: string;
 }
 

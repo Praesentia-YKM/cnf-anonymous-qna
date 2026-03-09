@@ -30,14 +30,14 @@ export function NicknameGate({ eventCode, children }: NicknameGateProps) {
 
   if (!ready) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 via-white to-blue-50 p-4">
-        <Card className="w-full max-w-sm shadow-xl border-0 bg-white/90 backdrop-blur">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 p-4">
+        <Card className="w-full max-w-sm shadow-xl border-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur">
           <CardHeader className="text-center pb-2">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-violet-100 to-blue-100 text-3xl mx-auto mb-2">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-violet-100 to-blue-100 dark:from-violet-900/30 dark:to-blue-900/30 text-3xl mx-auto mb-2">
               👤
             </div>
             <CardTitle className="text-xl">환영합니다!</CardTitle>
-            <p className="text-sm text-gray-500 mt-1">이벤트에서 사용할 닉네임을 설정하세요</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">이벤트에서 사용할 닉네임을 설정하세요</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">

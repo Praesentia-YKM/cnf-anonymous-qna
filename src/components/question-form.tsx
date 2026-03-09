@@ -52,7 +52,7 @@ export function QuestionForm({ eventId, eventCode, isActive, onOptimisticAdd }: 
 
   if (!isActive) {
     return (
-      <Card className="border-dashed border-gray-200 bg-gray-50/50">
+      <Card className="border-dashed border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
         <CardContent className="text-center text-gray-400 py-6">
           질문 접수가 종료되었습니다
         </CardContent>
@@ -61,14 +61,14 @@ export function QuestionForm({ eventId, eventCode, isActive, onOptimisticAdd }: 
   }
 
   return (
-    <Card className="bg-white shadow-[0_4px_16px_rgba(139,92,246,0.1)]">
+    <Card className="bg-white dark:bg-gray-800 shadow-[0_4px_16px_rgba(139,92,246,0.1)] dark:shadow-[0_4px_16px_rgba(139,92,246,0.05)]">
       <CardContent className="p-4">
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="flex items-center gap-2 mb-1">
             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-blue-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">
               {(nickname || "익명").charAt(0)}
             </div>
-            <span className="text-sm text-gray-700 font-semibold">
+            <span className="text-sm text-gray-700 dark:text-gray-300 font-semibold">
               {nickname || "익명"}
             </span>
           </div>
@@ -81,7 +81,7 @@ export function QuestionForm({ eventId, eventCode, isActive, onOptimisticAdd }: 
             className="resize-none"
           />
           <div className="flex justify-between items-center">
-            <span className="text-xs text-gray-500">{content.length}/500</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">{content.length}/500</span>
             <Button
               type="submit"
               disabled={!content.trim() || loading}

@@ -85,7 +85,7 @@ export function AnswerCard({ answer, liked, onLikeToggle }: AnswerCardProps) {
         className={`flex-shrink-0 flex flex-col items-center justify-center w-8 h-10 rounded-lg transition-all text-[10px] cursor-pointer gap-0.5 ${
           liked
             ? "bg-rose-500 text-white shadow-sm"
-            : "bg-gray-50 text-gray-400 hover:bg-rose-50 hover:text-rose-500 shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
+            : "bg-gray-50 dark:bg-gray-700 text-gray-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-500 shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
         }`}
       >
         <Heart className={`w-3 h-3 ${liked ? "fill-white" : ""}`} />
@@ -96,11 +96,11 @@ export function AnswerCard({ answer, liked, onLikeToggle }: AnswerCardProps) {
           <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white text-[7px] font-bold flex-shrink-0">
             {initial}
           </div>
-          <span className="text-[10px] font-semibold text-gray-600">
+          <span className="text-[10px] font-semibold text-gray-600 dark:text-gray-300">
             {answer.nickname || "익명"}
           </span>
           <span className="text-[10px] text-gray-400">·</span>
-          <span className="text-[10px] text-gray-500">{timeAgo}</span>
+          <span className="text-[10px] text-gray-500 dark:text-gray-400">{timeAgo}</span>
           {isMine && !editing && (
             <button
               className="text-[10px] text-gray-400 hover:text-violet-500 transition-colors cursor-pointer ml-1"
@@ -136,7 +136,7 @@ export function AnswerCard({ answer, liked, onLikeToggle }: AnswerCardProps) {
             </div>
           </div>
         ) : (
-          <p className="text-xs text-gray-700 leading-relaxed">{answer.content}</p>
+          <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">{answer.content}</p>
         )}
       </div>
     </div>

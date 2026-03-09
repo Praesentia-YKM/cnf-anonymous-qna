@@ -113,7 +113,7 @@ export function AnswerList({ questionId, eventCode, eventId, onCountChange }: An
 
   if (!loaded) {
     return (
-      <div className="mt-3 pl-4 border-l-2 border-violet-100">
+      <div className="mt-3 pl-4 border-l-2 border-violet-100 dark:border-violet-900/30">
         <p className="text-xs text-gray-400 py-2 animate-pulse">답변 로딩 중...</p>
       </div>
     );
@@ -122,7 +122,7 @@ export function AnswerList({ questionId, eventCode, eventId, onCountChange }: An
   const sorted = [...answers].sort((a, b) => b.like_count - a.like_count);
 
   return (
-    <div className="mt-3 pl-4 border-l-2 border-violet-100 space-y-1">
+    <div className="mt-3 pl-4 border-l-2 border-violet-100 dark:border-violet-900/30 space-y-1">
       {sorted.map((answer) => (
         <AnswerCard
           key={answer.id}
