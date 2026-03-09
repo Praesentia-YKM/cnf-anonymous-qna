@@ -65,41 +65,49 @@ export function QuestionCard({
         .maybeSingle();
 
       const actuallyLiked = !!existingLike;
-      const delta = actuallyLiked ? -1 : 1;
 
       // 낙관적 업데이트
       onLikeToggle(question.id, !actuallyLiked);
-      onLikeCountChange(question.id, delta);
+      onLikeCountChange(question.id, actuallyLiked ? -1 : 1);
 
+      // likes 행 추가/삭제
       if (actuallyLiked) {
-        const { error: deleteError } = await getSupabase()
+        await getSupabase()
           .from("likes")
           .delete()
           .eq("question_id", question.id)
           .eq("visitor_id", visitorId);
-        if (deleteError) throw deleteError;
       } else {
-        const { error: insertError } = await getSupabase()
+        await getSupabase()
           .from("likes")
           .insert({ question_id: question.id, visitor_id: visitorId });
-        if (insertError) throw insertError;
       }
 
-      const { error: rpcError } = await getSupabase().rpc("increment_like_count", {
-        q_id: question.id,
-        delta,
-      });
-      if (rpcError) throw rpcError;
+      // 실제 좋아요 수를 count하여 like_count 동기화 (RPC 의존 제거)
+      const { count } = await getSupabase()
+        .from("likes")
+        .select("id", { count: "exact", head: true })
+        .eq("question_id", question.id);
+
+      await getSupabase()
+        .from("questions")
+        .update({ like_count: count ?? 0 })
+        .eq("id", question.id);
     } catch (err) {
       console.error("좋아요 처리 실패:", err);
       // 실패 시 전체 상태 재동기화
-      const { data: likes } = await getSupabase()
+      const { count } = await getSupabase()
+        .from("likes")
+        .select("id", { count: "exact", head: true })
+        .eq("question_id", question.id);
+      const { data: myLike } = await getSupabase()
         .from("likes")
         .select("id")
         .eq("question_id", question.id)
         .eq("visitor_id", visitorId)
         .maybeSingle();
-      onLikeToggle(question.id, !!likes);
+      onLikeToggle(question.id, !!myLike);
+      onLikeCountChange(question.id, (count ?? 0) - question.like_count);
     } finally {
       setLoading(false);
     }

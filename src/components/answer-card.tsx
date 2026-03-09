@@ -24,20 +24,33 @@ export function AnswerCard({ answer, liked, onLikeToggle }: AnswerCardProps) {
   async function handleLike() {
     setLoading(true);
 
-    if (liked) {
-      await getSupabase()
+    try {
+      if (liked) {
+        await getSupabase()
+          .from("likes")
+          .delete()
+          .eq("answer_id", answer.id)
+          .eq("visitor_id", visitorId);
+        onLikeToggle(answer.id, false);
+      } else {
+        await getSupabase()
+          .from("likes")
+          .insert({ answer_id: answer.id, visitor_id: visitorId });
+        onLikeToggle(answer.id, true);
+      }
+
+      // 실제 좋아요 수를 count하여 like_count 동기화
+      const { count } = await getSupabase()
         .from("likes")
-        .delete()
-        .eq("answer_id", answer.id)
-        .eq("visitor_id", visitorId);
-      await getSupabase().rpc("increment_answer_like_count", { a_id: answer.id, delta: -1 });
-      onLikeToggle(answer.id, false);
-    } else {
+        .select("id", { count: "exact", head: true })
+        .eq("answer_id", answer.id);
+
       await getSupabase()
-        .from("likes")
-        .insert({ answer_id: answer.id, visitor_id: visitorId });
-      await getSupabase().rpc("increment_answer_like_count", { a_id: answer.id, delta: 1 });
-      onLikeToggle(answer.id, true);
+        .from("answers")
+        .update({ like_count: count ?? 0 })
+        .eq("id", answer.id);
+    } catch (err) {
+      console.error("답변 좋아요 처리 실패:", err);
     }
     setLoading(false);
   }
