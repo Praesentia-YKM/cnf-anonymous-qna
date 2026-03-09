@@ -64,7 +64,7 @@ export function AnswerForm({ questionId, eventCode, eventId, onOptimisticAdd }: 
         onChange={(e) => setContent(e.target.value)}
         maxLength={500}
         rows={2}
-        className="text-xs resize-none border-gray-200 focus:border-violet-300"
+        className="text-xs resize-none bg-white border-gray-300 text-gray-800 placeholder:text-gray-400 focus:border-violet-400 focus:ring-violet-200"
       />
       <div className="flex justify-between items-center">
         <span className="text-[10px] text-gray-400">{content.length}/500</span>

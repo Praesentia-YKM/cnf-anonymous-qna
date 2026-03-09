@@ -78,7 +78,7 @@ export function QuestionForm({ eventId, eventCode, isActive, onOptimisticAdd }: 
             onChange={(e) => setContent(e.target.value)}
             maxLength={500}
             rows={3}
-            className="resize-none border-gray-200 focus:border-violet-300"
+            className="resize-none bg-white border-gray-300 text-gray-800 placeholder:text-gray-400 focus:border-violet-400 focus:ring-violet-200"
           />
           <div className="flex justify-between items-center">
             <span className="text-xs text-gray-400">{content.length}/500</span>
