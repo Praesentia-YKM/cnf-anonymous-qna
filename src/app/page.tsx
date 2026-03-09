@@ -41,7 +41,7 @@ export default function Home() {
         <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center gap-2">
-              <span className="text-xl">✨</span> 새 이벤트 만들기
+              <span className="text-xl">✨</span> 새 소통방 만들기
             </CardTitle>
           </CardHeader>
           <CardContent>
