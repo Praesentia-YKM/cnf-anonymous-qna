@@ -67,7 +67,7 @@ export function QuestionCard({
             className={`flex-shrink-0 flex flex-col items-center justify-center w-12 h-14 rounded-xl transition-all ${
               liked
                 ? "bg-violet-500 text-white shadow-md"
-                : "bg-gray-100 text-gray-500 hover:bg-violet-50 hover:text-violet-500 border border-gray-200"
+                : "bg-gray-100 text-gray-600 hover:bg-violet-50 hover:text-violet-500 border border-gray-400"
             }`}
           >
             <span className="text-sm">▲</span>

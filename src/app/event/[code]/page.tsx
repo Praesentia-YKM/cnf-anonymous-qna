@@ -31,7 +31,7 @@ export default async function EventPage({
         <div className="max-w-2xl mx-auto px-4 py-6 space-y-5">
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-bold text-gray-800">{event.title}</h1>
-            <div className="inline-flex items-center gap-2 bg-white rounded-full px-4 py-1.5 shadow-sm border border-gray-200">
+            <div className="inline-flex items-center gap-2 bg-white rounded-full px-4 py-1.5 shadow-sm border border-gray-400">
               <span className="text-xs text-gray-500">참여 코드</span>
               <span className="font-mono font-bold text-violet-600 tracking-wider">{event.code}</span>
             </div>
