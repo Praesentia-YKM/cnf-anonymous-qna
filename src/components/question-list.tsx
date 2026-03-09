@@ -105,6 +105,16 @@ export function QuestionList({
     });
   }
 
+  function handleLikeCountChange(questionId: string, delta: number) {
+    setQuestions((prev) =>
+      prev.map((q) =>
+        q.id === questionId
+          ? { ...q, like_count: Math.max(0, q.like_count + delta) }
+          : q
+      )
+    );
+  }
+
   async function handleMarkAnswered(questionId: string) {
     await getSupabase()
       .from("questions")
@@ -161,6 +171,7 @@ export function QuestionList({
             question={question}
             liked={likedIds.has(question.id)}
             onLikeToggle={handleLikeToggle}
+            onLikeCountChange={handleLikeCountChange}
             eventCode={eventCode}
             eventId={eventId}
             isAdmin={isAdmin}

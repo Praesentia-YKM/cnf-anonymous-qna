@@ -13,6 +13,7 @@ interface QuestionCardProps {
   question: Question;
   liked: boolean;
   onLikeToggle: (questionId: string, liked: boolean) => void;
+  onLikeCountChange: (questionId: string, delta: number) => void;
   eventCode: string;
   eventId?: string;
   isAdmin?: boolean;
@@ -23,6 +24,7 @@ export function QuestionCard({
   question,
   liked,
   onLikeToggle,
+  onLikeCountChange,
   eventCode,
   eventId,
   isAdmin = false,
@@ -52,23 +54,40 @@ export function QuestionCard({
 
   async function handleLike() {
     setLoading(true);
+    const delta = liked ? -1 : 1;
 
-    if (liked) {
-      await getSupabase()
-        .from("likes")
-        .delete()
-        .eq("question_id", question.id)
-        .eq("visitor_id", visitorId);
-      await getSupabase().rpc("increment_like_count", { q_id: question.id, delta: -1 });
-      onLikeToggle(question.id, false);
-    } else {
-      await getSupabase()
-        .from("likes")
-        .insert({ question_id: question.id, visitor_id: visitorId });
-      await getSupabase().rpc("increment_like_count", { q_id: question.id, delta: 1 });
-      onLikeToggle(question.id, true);
+    // 낙관적 업데이트
+    onLikeToggle(question.id, !liked);
+    onLikeCountChange(question.id, delta);
+
+    try {
+      if (liked) {
+        const { error: deleteError } = await getSupabase()
+          .from("likes")
+          .delete()
+          .eq("question_id", question.id)
+          .eq("visitor_id", visitorId);
+        if (deleteError) throw deleteError;
+      } else {
+        const { error: insertError } = await getSupabase()
+          .from("likes")
+          .insert({ question_id: question.id, visitor_id: visitorId });
+        if (insertError) throw insertError;
+      }
+
+      const { error: rpcError } = await getSupabase().rpc("increment_like_count", {
+        q_id: question.id,
+        delta,
+      });
+      if (rpcError) throw rpcError;
+    } catch (err) {
+      console.error("좋아요 처리 실패:", err);
+      // 롤백
+      onLikeToggle(question.id, liked);
+      onLikeCountChange(question.id, -delta);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   async function handleEdit() {
