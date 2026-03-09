@@ -10,10 +10,11 @@ import { AnswerForm } from "./answer-form";
 interface AnswerListProps {
   questionId: string;
   eventCode: string;
+  eventId?: string;
   onCountChange?: (count: number) => void;
 }
 
-export function AnswerList({ questionId, eventCode, onCountChange }: AnswerListProps) {
+export function AnswerList({ questionId, eventCode, eventId, onCountChange }: AnswerListProps) {
   const [answers, setAnswers] = useState<Answer[]>([]);
   const [likedIds, setLikedIds] = useState<Set<string>>(new Set());
   const [loaded, setLoaded] = useState(false);
@@ -136,6 +137,7 @@ export function AnswerList({ questionId, eventCode, onCountChange }: AnswerListP
       <AnswerForm
         questionId={questionId}
         eventCode={eventCode}
+        eventId={eventId}
         onOptimisticAdd={handleOptimisticAdd}
       />
     </div>

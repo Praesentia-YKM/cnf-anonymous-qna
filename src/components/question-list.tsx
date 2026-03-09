@@ -162,6 +162,7 @@ export function QuestionList({
             liked={likedIds.has(question.id)}
             onLikeToggle={handleLikeToggle}
             eventCode={eventCode}
+            eventId={eventId}
             isAdmin={isAdmin}
             onMarkAnswered={handleMarkAnswered}
           />

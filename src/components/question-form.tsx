@@ -3,8 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { getSupabase } from "@/lib/supabase";
 import { getNickname } from "@/lib/utils/nickname";
+import { getVisitorId } from "@/lib/utils/visitor";
 import { Question } from "@/lib/types";
 import { useState } from "react";
 
@@ -31,15 +31,17 @@ export function QuestionForm({ eventId, eventCode, isActive, onOptimisticAdd }: 
     setLoading(true);
     setContent("");
 
-    const { data } = await getSupabase()
-      .from("questions")
-      .insert({
+    const res = await fetch("/api/questions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         event_id: eventId,
         content: trimmed,
         nickname: nick,
-      })
-      .select()
-      .single();
+        visitor_id: getVisitorId(),
+      }),
+    });
+    const data = res.ok ? await res.json() : null;
 
     if (data && onOptimisticAdd) {
       onOptimisticAdd(data);

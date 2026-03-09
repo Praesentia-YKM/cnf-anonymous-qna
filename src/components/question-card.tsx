@@ -14,6 +14,7 @@ interface QuestionCardProps {
   liked: boolean;
   onLikeToggle: (questionId: string, liked: boolean) => void;
   eventCode: string;
+  eventId?: string;
   isAdmin?: boolean;
   onMarkAnswered?: (questionId: string) => void;
 }
@@ -23,6 +24,7 @@ export function QuestionCard({
   liked,
   onLikeToggle,
   eventCode,
+  eventId,
   isAdmin = false,
   onMarkAnswered,
 }: QuestionCardProps) {
@@ -116,6 +118,7 @@ export function QuestionCard({
               <AnswerList
                 questionId={question.id}
                 eventCode={eventCode}
+                eventId={eventId}
                 onCountChange={setAnswerCount}
               />
             )}

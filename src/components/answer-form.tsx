@@ -2,18 +2,19 @@
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { getSupabase } from "@/lib/supabase";
 import { getNickname } from "@/lib/utils/nickname";
+import { getVisitorId } from "@/lib/utils/visitor";
 import { Answer } from "@/lib/types";
 import { useState } from "react";
 
 interface AnswerFormProps {
   questionId: string;
   eventCode: string;
+  eventId?: string;
   onOptimisticAdd?: (answer: Answer) => void;
 }
 
-export function AnswerForm({ questionId, eventCode, onOptimisticAdd }: AnswerFormProps) {
+export function AnswerForm({ questionId, eventCode, eventId, onOptimisticAdd }: AnswerFormProps) {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -29,15 +30,18 @@ export function AnswerForm({ questionId, eventCode, onOptimisticAdd }: AnswerFor
     setLoading(true);
     setContent("");
 
-    const { data } = await getSupabase()
-      .from("answers")
-      .insert({
+    const res = await fetch("/api/answers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         question_id: questionId,
         content: trimmed,
         nickname: nick,
-      })
-      .select()
-      .single();
+        event_id: eventId,
+        visitor_id: getVisitorId(),
+      }),
+    });
+    const data = res.ok ? await res.json() : null;
 
     if (data && onOptimisticAdd) {
       onOptimisticAdd(data);
