@@ -12,6 +12,7 @@ export interface Question {
   event_id: string;
   content: string;
   nickname: string | null;
+  visitor_id: string | null;
   like_count: number;
   is_answered: boolean;
   created_at: string;
@@ -22,6 +23,7 @@ export interface Answer {
   question_id: string;
   content: string;
   nickname: string | null;
+  visitor_id: string | null;
   like_count: number;
   created_at: string;
 }

@@ -1,12 +1,12 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Question } from "@/lib/types";
 import { getSupabase } from "@/lib/supabase";
 import { getVisitorId } from "@/lib/utils/visitor";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnswerList } from "./answer-list";
 
 interface QuestionCardProps {
@@ -31,10 +31,27 @@ export function QuestionCard({
   const [loading, setLoading] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const [answerCount, setAnswerCount] = useState<number | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [editContent, setEditContent] = useState(question.content);
+  const [saving, setSaving] = useState(false);
+
+  const visitorId = getVisitorId();
+  const isMine = question.visitor_id && question.visitor_id === visitorId;
+
+  // 답변 개수 초기 로드 (펼치지 않아도 표시)
+  useEffect(() => {
+    async function loadCount() {
+      const { count } = await getSupabase()
+        .from("answers")
+        .select("id", { count: "exact", head: true })
+        .eq("question_id", question.id);
+      setAnswerCount(count ?? 0);
+    }
+    loadCount();
+  }, [question.id]);
 
   async function handleLike() {
     setLoading(true);
-    const visitorId = getVisitorId();
 
     if (liked) {
       await getSupabase()
@@ -52,6 +69,24 @@ export function QuestionCard({
       onLikeToggle(question.id, true);
     }
     setLoading(false);
+  }
+
+  async function handleEdit() {
+    if (!editContent.trim() || saving) return;
+    setSaving(true);
+    const res = await fetch("/api/questions", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: question.id,
+        content: editContent.trim(),
+        visitor_id: visitorId,
+      }),
+    });
+    if (res.ok) {
+      setEditing(false);
+    }
+    setSaving(false);
   }
 
   const timeAgo = getTimeAgo(question.created_at);
@@ -89,14 +124,41 @@ export function QuestionCard({
               )}
             </div>
 
-            <p className="text-sm text-gray-900 leading-relaxed font-medium">{question.content}</p>
+            {editing ? (
+              <div className="space-y-2">
+                <Textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  maxLength={500}
+                  rows={3}
+                  className="text-sm resize-none"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleEdit}
+                    disabled={saving || !editContent.trim()}
+                    className="text-xs font-medium text-white bg-violet-500 hover:bg-violet-600 px-3 py-1 rounded-lg transition-colors"
+                  >
+                    {saving ? "저장 중..." : "저장"}
+                  </button>
+                  <button
+                    onClick={() => { setEditing(false); setEditContent(question.content); }}
+                    className="text-xs font-medium text-gray-500 hover:text-gray-700 px-3 py-1 rounded-lg transition-colors"
+                  >
+                    취소
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-gray-900 leading-relaxed font-medium">{question.content}</p>
+            )}
 
             <div className="flex items-center gap-3 pt-1">
               <button
-                className="text-xs text-violet-500 font-medium hover:text-violet-600 transition-colors flex items-center gap-1 cursor-pointer"
+                className="text-xs text-violet-500 font-medium hover:text-violet-600 transition-colors flex items-center gap-1.5 cursor-pointer"
                 onClick={() => setExpanded(!expanded)}
               >
-                <span>{expanded ? "💬" : "💬"}</span>
+                <span>💬</span>
                 <span>{expanded ? "답변 접기" : "답변 보기"}</span>
                 {answerCount !== null && answerCount > 0 && (
                   <span className="bg-violet-100 text-violet-600 rounded-full px-1.5 py-0.5 text-[10px] font-bold">
@@ -104,6 +166,14 @@ export function QuestionCard({
                   </span>
                 )}
               </button>
+              {isMine && !editing && (
+                <button
+                  className="text-xs text-gray-400 hover:text-violet-500 transition-colors cursor-pointer"
+                  onClick={() => setEditing(true)}
+                >
+                  수정
+                </button>
+              )}
               {isAdmin && !question.is_answered && onMarkAnswered && (
                 <button
                   className="text-xs text-gray-300 hover:text-green-500 transition-colors"

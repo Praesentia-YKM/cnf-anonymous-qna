@@ -1,6 +1,7 @@
 "use client";
 
 import { Answer } from "@/lib/types";
+import { Textarea } from "@/components/ui/textarea";
 import { getSupabase } from "@/lib/supabase";
 import { getVisitorId } from "@/lib/utils/visitor";
 import { useState } from "react";
@@ -13,10 +14,15 @@ interface AnswerCardProps {
 
 export function AnswerCard({ answer, liked, onLikeToggle }: AnswerCardProps) {
   const [loading, setLoading] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editContent, setEditContent] = useState(answer.content);
+  const [saving, setSaving] = useState(false);
+
+  const visitorId = getVisitorId();
+  const isMine = answer.visitor_id && answer.visitor_id === visitorId;
 
   async function handleLike() {
     setLoading(true);
-    const visitorId = getVisitorId();
 
     if (liked) {
       await getSupabase()
@@ -36,6 +42,24 @@ export function AnswerCard({ answer, liked, onLikeToggle }: AnswerCardProps) {
     setLoading(false);
   }
 
+  async function handleEdit() {
+    if (!editContent.trim() || saving) return;
+    setSaving(true);
+    const res = await fetch("/api/answers", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: answer.id,
+        content: editContent.trim(),
+        visitor_id: visitorId,
+      }),
+    });
+    if (res.ok) {
+      setEditing(false);
+    }
+    setSaving(false);
+  }
+
   const timeAgo = getTimeAgo(answer.created_at);
   const initial = (answer.nickname || "익명").charAt(0);
 
@@ -44,10 +68,10 @@ export function AnswerCard({ answer, liked, onLikeToggle }: AnswerCardProps) {
       <button
         onClick={handleLike}
         disabled={loading}
-        className={`flex-shrink-0 flex flex-col items-center justify-center w-8 h-10 rounded-lg transition-all text-[10px] ${
+        className={`flex-shrink-0 flex flex-col items-center justify-center w-8 h-10 rounded-lg transition-all text-[10px] cursor-pointer ${
           liked
             ? "bg-violet-500 text-white shadow-sm"
-            : "bg-gray-50 text-gray-400 hover:bg-violet-50 hover:text-violet-500 border border-gray-100"
+            : "bg-gray-50 text-gray-500 hover:bg-violet-50 hover:text-violet-500 shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
         }`}
       >
         <span>▲</span>
@@ -55,16 +79,51 @@ export function AnswerCard({ answer, liked, onLikeToggle }: AnswerCardProps) {
       </button>
       <div className="flex-1 min-w-0 space-y-0.5">
         <div className="flex items-center gap-1.5">
-          <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-300 to-violet-300 flex items-center justify-center text-white text-[7px] font-bold flex-shrink-0">
+          <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-500 to-violet-500 flex items-center justify-center text-white text-[7px] font-bold flex-shrink-0">
             {initial}
           </div>
           <span className="text-[10px] font-semibold text-gray-600">
             {answer.nickname || "익명"}
           </span>
-          <span className="text-[10px] text-gray-300">·</span>
-          <span className="text-[10px] text-gray-400">{timeAgo}</span>
+          <span className="text-[10px] text-gray-400">·</span>
+          <span className="text-[10px] text-gray-500">{timeAgo}</span>
+          {isMine && !editing && (
+            <button
+              className="text-[10px] text-gray-400 hover:text-violet-500 transition-colors cursor-pointer ml-1"
+              onClick={() => setEditing(true)}
+            >
+              수정
+            </button>
+          )}
         </div>
-        <p className="text-xs text-gray-700 leading-relaxed">{answer.content}</p>
+        {editing ? (
+          <div className="space-y-1.5">
+            <Textarea
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              maxLength={500}
+              rows={2}
+              className="text-xs resize-none"
+            />
+            <div className="flex gap-2">
+              <button
+                onClick={handleEdit}
+                disabled={saving || !editContent.trim()}
+                className="text-[10px] font-medium text-white bg-violet-500 hover:bg-violet-600 px-2 py-0.5 rounded-md transition-colors"
+              >
+                {saving ? "저장 중..." : "저장"}
+              </button>
+              <button
+                onClick={() => { setEditing(false); setEditContent(answer.content); }}
+                className="text-[10px] font-medium text-gray-500 hover:text-gray-700 px-2 py-0.5 rounded-md transition-colors"
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        ) : (
+          <p className="text-xs text-gray-700 leading-relaxed">{answer.content}</p>
+        )}
       </div>
     </div>
   );
