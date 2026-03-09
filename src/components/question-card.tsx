@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Question } from "@/lib/types";
+import { Heart } from "lucide-react";
 import { getSupabase } from "@/lib/supabase";
 import { getVisitorId } from "@/lib/utils/visitor";
 import { useEffect, useState } from "react";
@@ -141,14 +142,14 @@ export function QuestionCard({
           <button
             onClick={handleLike}
             disabled={loading}
-            className={`flex-shrink-0 flex flex-col items-center justify-center w-12 h-14 rounded-xl transition-all cursor-pointer ${
+            className={`flex-shrink-0 flex flex-col items-center justify-center w-12 h-14 rounded-xl transition-all cursor-pointer gap-0.5 ${
               liked
-                ? "bg-violet-500 text-white shadow-md shadow-violet-200"
-                : "bg-gray-50 text-gray-600 hover:bg-violet-50 hover:text-violet-500 shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
+                ? "bg-rose-500 text-white shadow-md shadow-rose-200"
+                : "bg-gray-50 text-gray-400 hover:bg-rose-50 hover:text-rose-500 shadow-[0_1px_4px_rgba(0,0,0,0.1)]"
             }`}
           >
-            <span className="text-sm">▲</span>
-            <span className="text-sm font-bold">{question.like_count}</span>
+            <Heart className={`w-4 h-4 ${liked ? "fill-white" : ""}`} />
+            <span className="text-xs font-bold">{question.like_count}</span>
           </button>
 
           <div className="flex-1 min-w-0 space-y-1.5">

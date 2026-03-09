@@ -2,6 +2,7 @@
 
 import { Answer } from "@/lib/types";
 import { Textarea } from "@/components/ui/textarea";
+import { Heart } from "lucide-react";
 import { getSupabase } from "@/lib/supabase";
 import { getVisitorId } from "@/lib/utils/visitor";
 import { useState } from "react";
@@ -81,13 +82,13 @@ export function AnswerCard({ answer, liked, onLikeToggle }: AnswerCardProps) {
       <button
         onClick={handleLike}
         disabled={loading}
-        className={`flex-shrink-0 flex flex-col items-center justify-center w-8 h-10 rounded-lg transition-all text-[10px] cursor-pointer ${
+        className={`flex-shrink-0 flex flex-col items-center justify-center w-8 h-10 rounded-lg transition-all text-[10px] cursor-pointer gap-0.5 ${
           liked
-            ? "bg-violet-500 text-white shadow-sm"
-            : "bg-gray-50 text-gray-500 hover:bg-violet-50 hover:text-violet-500 shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
+            ? "bg-rose-500 text-white shadow-sm"
+            : "bg-gray-50 text-gray-400 hover:bg-rose-50 hover:text-rose-500 shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
         }`}
       >
-        <span>▲</span>
+        <Heart className={`w-3 h-3 ${liked ? "fill-white" : ""}`} />
         <span className="font-bold">{answer.like_count}</span>
       </button>
       <div className="flex-1 min-w-0 space-y-0.5">
