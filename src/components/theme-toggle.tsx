@@ -12,9 +12,19 @@ export function ThemeToggle() {
 
   if (!mounted) return null;
 
+  function handleToggle() {
+    // 전환 전에 transition 클래스 추가
+    document.documentElement.classList.add("theme-transition");
+    setTheme(theme === "dark" ? "light" : "dark");
+    // 전환 완료 후 클래스 제거
+    setTimeout(() => {
+      document.documentElement.classList.remove("theme-transition");
+    }, 500);
+  }
+
   return (
     <button
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      onClick={handleToggle}
       className="p-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer shadow-sm"
       aria-label="테마 전환"
     >
